@@ -1,0 +1,34 @@
+openapi: 3.0.1
+info:
+  title: "Potter Price Calculation"
+  version: "1.0.0"
+paths:
+  /price:
+    get:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookList'
+        required: true
+      responses:
+        200:
+          description: Price
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Price'
+components:
+  schemas:
+    BookList:
+      type: array
+      items:
+        type: string
+        enum: ["I","II","III","IV","V"]
+    Price:
+      type: object
+      required:
+        - inCent
+      properties:
+        inCent:
+          type: number
