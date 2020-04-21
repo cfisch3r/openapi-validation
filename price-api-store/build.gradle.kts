@@ -19,7 +19,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "de.agiledojo.cdd"
             artifactId = "price-api-store"
-            version = "1.2"
+            version = "1.6"
 
             from(components["java"])
         }

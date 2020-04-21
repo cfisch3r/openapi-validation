@@ -20,7 +20,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.26.1")
     testImplementation("com.atlassian.oai:swagger-request-validator-wiremock:2.9.0")
-    testImplementation("de.agiledojo.cdd:price-api-store:1.2")
+    testImplementation("de.agiledojo.cdd:price-api-store:1.6")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PriceApi {
 
-    @RequestLine("POST /priceFor")
+    @RequestLine("POST /price")
     @Headers("Content-Type: application/json")
     Price priceFor(List<String> books);
 }

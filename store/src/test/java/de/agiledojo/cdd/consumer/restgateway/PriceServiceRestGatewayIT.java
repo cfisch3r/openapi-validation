@@ -20,7 +20,7 @@ public class PriceServiceRestGatewayIT {
     private static final String CALCULATOR_CONTRACT = "de/agiledojo/cdd/price-api/store.yml";
     private static final long CONNECT_TIMEOUT = 50L;
     private static final long READ_TIMEOUT = 50L;
-    public static final String ENDPOINT_PATH = "/priceFor";
+    public static final String ENDPOINT_PATH = "/price";
     public static final String RESPONSE_BODY_WITH_ADDITIONAL_FIELD = "{\"inCent\":800,\"xxx\":5}";
     private PriceServiceGateway gateway;
     private WireMockServer server;
