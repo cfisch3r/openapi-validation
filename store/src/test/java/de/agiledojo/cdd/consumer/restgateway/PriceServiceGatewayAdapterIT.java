@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Price Service Gateway Adapter based on Feign")
-public class PriceServiceRestGatewayIT {
+public class PriceServiceGatewayAdapterIT {
 
     private static final String VALID_RESPONSE_BDY = "{\"inCent\":800}";
     private static final String EMPTY_RESPONSE_BODY = "{}";
