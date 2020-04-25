@@ -3,8 +3,8 @@ package de.agiledojo.cdd.consumer.restgateway;
 import com.atlassian.oai.validator.wiremock.OpenApiValidationListener;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import de.agiledojo.cdd.consumer.core.PriceServiceGateway;
 import de.agiledojo.cdd.consumer.core.POTTER_BOOKS;
+import de.agiledojo.cdd.consumer.core.PriceServiceGateway;
 import org.junit.jupiter.api.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -38,8 +38,39 @@ public class PriceServiceGatewayAdapterIT {
         server.stop();
     }
 
+    @Test
+    void returns_price_for_purchased_books_from_Rest_API() {
+        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
+        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
+        assertThat(price.inCent).isEqualTo(800);
+    }
+
+    @Test
+    void sends_requested_books_to_price_service() {
+        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
+        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
+        server.verify(postRequestedFor(urlPathEqualTo(ENDPOINT_PATH))
+                .withRequestBody(equalToJson("[\"I\"]")));
+    }
+
+    @Test
+    void tolerates_additional_fields_in_response_from_producer() {
+        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODY_WITH_ADDITIONAL_FIELD);
+        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
+        assertThat(price.inCent).isEqualTo(800);
+    }
+
+    @Test
+    void communicates_with_calculator_endpoint_according_to_contract() {
+        apiValidationListener = new OpenApiValidationListener(CALCULATOR_CONTRACT);
+        server.addMockServiceRequestListener(apiValidationListener);
+        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
+        gateway.priceFor(singletonList(POTTER_BOOKS.I));
+        apiValidationListener.assertValidationPassed();
+    }
+
     @Nested
-    class should_throw_a_communication_exception {
+    class throws_a_communication_exception {
 
         @Test
         void for_remote_server_error_code() {
@@ -70,9 +101,9 @@ public class PriceServiceGatewayAdapterIT {
 
 
     }
-
     @Nested
-    class should_throw_a_contract_exception {
+    class throws_a_contract_exception {
+
 
         @Test
         void for_missing_or_invalid_attributes_in_response_body() {
@@ -87,37 +118,6 @@ public class PriceServiceGatewayAdapterIT {
             assertThrows(ContractException.class, () ->
                     gateway.priceFor(singletonList(POTTER_BOOKS.I)));
         }
-    }
-
-    @Test
-    void should_return_price_for_purchased_books_from_Rest_API() {
-        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
-        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
-        assertThat(price.inCent).isEqualTo(800);
-    }
-
-    @Test
-    void should_send_requested_books_to_price_service() {
-        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
-        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
-        server.verify(postRequestedFor(urlPathEqualTo(ENDPOINT_PATH))
-                .withRequestBody(equalToJson("[\"I\"]")));
-    }
-
-    @Test
-    void should_tolerate_additional_fields_in_response_from_producer() {
-        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODY_WITH_ADDITIONAL_FIELD);
-        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
-        assertThat(price.inCent).isEqualTo(800);
-    }
-
-    @Test
-    void should_communicate_with_calculator_endpoint_according_to_contract() {
-        apiValidationListener = new OpenApiValidationListener(CALCULATOR_CONTRACT);
-        server.addMockServiceRequestListener(apiValidationListener);
-        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
-        gateway.priceFor(singletonList(POTTER_BOOKS.I));
-        apiValidationListener.assertValidationPassed();
     }
 
     private void setupProducerWithResponseStatusCode(int statusCode) {
