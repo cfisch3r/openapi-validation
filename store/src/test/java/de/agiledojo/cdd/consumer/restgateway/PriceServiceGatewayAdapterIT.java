@@ -61,7 +61,7 @@ public class PriceServiceGatewayAdapterIT {
     }
 
     @Test
-    void communicates_with_calculator_endpoint_according_to_contract() {
+    void communicates_with_price_service_according_to_contract() {
         apiValidationListener = new OpenApiValidationListener(CALCULATOR_CONTRACT);
         server.addMockServiceRequestListener(apiValidationListener);
         setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
