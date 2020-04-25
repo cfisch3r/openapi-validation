@@ -12,7 +12,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("Price Service Gateway Adapter based on Feign")
+@DisplayName("Price Service Gateway Adapter")
 public class PriceServiceGatewayAdapterIT {
 
     private static final String VALID_RESPONSE_BDY = "{\"inCent\":800}";
@@ -94,6 +94,14 @@ public class PriceServiceGatewayAdapterIT {
         setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
         var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
         assertThat(price.inCent).isEqualTo(800);
+    }
+
+    @Test
+    void should_send_requested_books_to_price_service() {
+        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
+        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
+        server.verify(postRequestedFor(urlPathEqualTo(ENDPOINT_PATH))
+                .withRequestBody(equalToJson("[\"I\"]")));
     }
 
     @Test
