@@ -39,14 +39,14 @@ public class PriceServiceGatewayAdapterIT {
     }
 
     @Test
-    void returns_price_for_purchased_books_from_Rest_API() {
+    void returns_price_for_purchased_books_from_price_service() {
         setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
         var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
         assertThat(price.inCent).isEqualTo(800);
     }
 
     @Test
-    void sends_requested_books_to_price_service() {
+    void sends_purchased_books_to_price_service() {
         setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
         var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
         server.verify(postRequestedFor(urlPathEqualTo(ENDPOINT_PATH))
