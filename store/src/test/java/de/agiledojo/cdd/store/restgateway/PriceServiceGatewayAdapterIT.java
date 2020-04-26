@@ -1,10 +1,10 @@
-package de.agiledojo.cdd.consumer.restgateway;
+package de.agiledojo.cdd.store.restgateway;
 
 import com.atlassian.oai.validator.wiremock.OpenApiValidationListener;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import de.agiledojo.cdd.consumer.core.POTTER_BOOKS;
-import de.agiledojo.cdd.consumer.core.PriceServiceGateway;
+import de.agiledojo.cdd.store.core.POTTER_BOOKS;
+import de.agiledojo.cdd.store.core.PriceServiceGateway;
 import org.junit.jupiter.api.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;

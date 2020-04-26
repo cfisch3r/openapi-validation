@@ -1,8 +1,8 @@
-package de.agiledojo.cdd.consumer.restgateway;
+package de.agiledojo.cdd.store.restgateway;
 
-import de.agiledojo.cdd.consumer.core.PriceServiceGateway;
-import de.agiledojo.cdd.consumer.core.POTTER_BOOKS;
-import de.agiledojo.cdd.consumer.core.Price;
+import de.agiledojo.cdd.store.core.POTTER_BOOKS;
+import de.agiledojo.cdd.store.core.Price;
+import de.agiledojo.cdd.store.core.PriceServiceGateway;
 import feign.Feign;
 import feign.FeignException;
 import feign.Request;

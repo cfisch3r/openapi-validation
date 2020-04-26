@@ -1,4 +1,4 @@
-package de.agiledojo.cdd.consumer.restgateway;
+package de.agiledojo.cdd.store.restgateway;
 
 public class CommunicationException extends RuntimeException {
     public CommunicationException(String message) {

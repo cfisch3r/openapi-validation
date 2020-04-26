@@ -1,6 +1,6 @@
-package de.agiledojo.cdd.consumer.restgateway;
+package de.agiledojo.cdd.store.restgateway;
 
-import de.agiledojo.cdd.consumer.core.Price;
+import de.agiledojo.cdd.store.core.Price;
 import feign.Headers;
 import feign.RequestLine;
 

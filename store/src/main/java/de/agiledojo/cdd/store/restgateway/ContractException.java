@@ -1,6 +1,4 @@
-package de.agiledojo.cdd.consumer.restgateway;
-
-import feign.FeignException;
+package de.agiledojo.cdd.store.restgateway;
 
 public class ContractException extends RuntimeException {
     public ContractException(String messages) {

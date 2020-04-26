@@ -1,4 +1,4 @@
-package de.agiledojo.cdd.consumer.core;
+package de.agiledojo.cdd.store.core;
 
 import java.util.List;
 
