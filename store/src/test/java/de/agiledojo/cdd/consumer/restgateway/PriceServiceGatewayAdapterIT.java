@@ -54,7 +54,7 @@ public class PriceServiceGatewayAdapterIT {
     }
 
     @Test
-    void tolerates_additional_fields_in_response_from_producer() {
+    void tolerates_additional_fields_in_response_from_price_service() {
         setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODY_WITH_ADDITIONAL_FIELD);
         var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
         assertThat(price.inCent).isEqualTo(800);
