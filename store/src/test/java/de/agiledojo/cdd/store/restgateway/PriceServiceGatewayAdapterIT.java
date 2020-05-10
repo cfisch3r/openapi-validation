@@ -4,6 +4,7 @@ import com.atlassian.oai.validator.wiremock.OpenApiValidationListener;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import de.agiledojo.cdd.store.core.POTTER_BOOKS;
+import de.agiledojo.cdd.store.core.Price;
 import de.agiledojo.cdd.store.core.PriceServiceGateway;
 import org.junit.jupiter.api.*;
 
@@ -14,23 +15,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Price Service Gateway Adapter")
 public class PriceServiceGatewayAdapterIT {
+    private enum RESPONSE_BODIES {
+        EMPTY("{}"),
+        MINIMAL("{\"inCent\":800}"),
+        WITH_ADDITIONAL_FIELDS("{\"inCent\":800,\"xxx\":5}");
 
-    private static final String VALID_RESPONSE_BDY = "{\"inCent\":800}";
-    private static final String EMPTY_RESPONSE_BODY = "{}";
+        private String value;
+
+        RESPONSE_BODIES(String value) {
+            this.value = value;
+        }
+    }
+
     private static final String CALCULATOR_CONTRACT = "de/agiledojo/cdd/price-api/store.yml";
     private static final long CONNECT_TIMEOUT = 50L;
     private static final long READ_TIMEOUT = 50L;
     public static final String ENDPOINT_PATH = "/price";
-    public static final String RESPONSE_BODY_WITH_ADDITIONAL_FIELD = "{\"inCent\":800,\"xxx\":5}";
     private PriceServiceGateway gateway;
     private WireMockServer server;
-    private OpenApiValidationListener apiValidationListener;
 
     @BeforeEach
     void setUp() {
         server = new WireMockServer(WireMockConfiguration.DYNAMIC_PORT);
         server.start();
-        gateway = createGateway(server.baseUrl(),CONNECT_TIMEOUT,READ_TIMEOUT);
+        gateway = createGateway(server.baseUrl(), CONNECT_TIMEOUT, READ_TIMEOUT);
     }
 
     @AfterEach
@@ -40,33 +48,32 @@ public class PriceServiceGatewayAdapterIT {
 
     @Test
     void returns_price_for_purchased_books_from_price_service() {
-        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
+        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODIES.MINIMAL);
         var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
         assertThat(price.inCent).isEqualTo(800);
     }
 
     @Test
-    void sends_purchased_books_to_price_service() {
-        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
-        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
+    void sends_requested_books_to_price_service() {
+        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODIES.MINIMAL);
+        gateway.priceFor(singletonList(POTTER_BOOKS.I));
         server.verify(postRequestedFor(urlPathEqualTo(ENDPOINT_PATH))
                 .withRequestBody(equalToJson("[\"I\"]")));
     }
 
     @Test
-    void tolerates_additional_fields_in_response_from_price_service() {
-        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODY_WITH_ADDITIONAL_FIELD);
-        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
-        assertThat(price.inCent).isEqualTo(800);
-    }
-
-    @Test
     void communicates_with_price_service_according_to_contract() {
-        apiValidationListener = new OpenApiValidationListener(CALCULATOR_CONTRACT);
+        var apiValidationListener = new OpenApiValidationListener(CALCULATOR_CONTRACT);
         server.addMockServiceRequestListener(apiValidationListener);
-        setUpProducerEndpointWithSuccessfulResponse(VALID_RESPONSE_BDY);
+        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODIES.MINIMAL);
         gateway.priceFor(singletonList(POTTER_BOOKS.I));
         apiValidationListener.assertValidationPassed();
+    }
+    @Test
+    void tolerates_additional_fields_in_response_from_price_service() {
+        setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODIES.WITH_ADDITIONAL_FIELDS);
+        var price = gateway.priceFor(singletonList(POTTER_BOOKS.I));
+        assertThat(price.inCent).isEqualTo(800);
     }
 
     @Nested
@@ -75,13 +82,13 @@ public class PriceServiceGatewayAdapterIT {
         @Test
         void for_remote_server_error_code() {
             setupProducerWithResponseStatusCode(500);
-            assertThatServiceExceptionWasThrownWhenRequestingPriceForBooks();
+            assertThatCommunicationExceptionWasThrownWhenRequestingPriceForBooks();
         }
 
         @Test
         void when_connection_to_server_fails() {
             server.stop();
-            assertThatServiceExceptionWasThrownWhenRequestingPriceForBooks();
+            assertThatCommunicationExceptionWasThrownWhenRequestingPriceForBooks();
         }
 
         @Test
@@ -89,33 +96,37 @@ public class PriceServiceGatewayAdapterIT {
             server.stubFor(post(urlEqualTo(ENDPOINT_PATH)).willReturn(
                     aResponse()
                             .withStatus(200)
-                            .withBody(VALID_RESPONSE_BDY)
+                            .withBody(RESPONSE_BODIES.MINIMAL.value)
                             .withFixedDelay((int) (READ_TIMEOUT + 10))));
-            assertThatServiceExceptionWasThrownWhenRequestingPriceForBooks();
+            assertThatCommunicationExceptionWasThrownWhenRequestingPriceForBooks();
         }
 
-        private void assertThatServiceExceptionWasThrownWhenRequestingPriceForBooks() {
+        private void assertThatCommunicationExceptionWasThrownWhenRequestingPriceForBooks() {
             assertThrows(CommunicationException.class, () ->
                     gateway.priceFor(singletonList(POTTER_BOOKS.I)));
         }
 
 
     }
+
     @Nested
     class throws_a_contract_exception {
 
 
         @Test
         void for_missing_or_invalid_attributes_in_response_body() {
-            setUpProducerEndpointWithSuccessfulResponse(EMPTY_RESPONSE_BODY);
-            assertThrows(ContractException.class, () ->
-                    gateway.priceFor(singletonList(POTTER_BOOKS.I)));
+            setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODIES.EMPTY);
+            assertThatContractExceptionWasThrownWhenRequestingPriceForBooks();
         }
 
         @Test
         void when_sending_invalid_book_ids() {
             setupProducerWithResponseStatusCode(400);
-            assertThrows(ContractException.class, () ->
+            assertThatContractExceptionWasThrownWhenRequestingPriceForBooks();
+        }
+
+        private ContractException assertThatContractExceptionWasThrownWhenRequestingPriceForBooks() {
+            return assertThrows(ContractException.class, () ->
                     gateway.priceFor(singletonList(POTTER_BOOKS.I)));
         }
     }
@@ -125,9 +136,9 @@ public class PriceServiceGatewayAdapterIT {
                 .willReturn(status(statusCode)));
     }
 
-    private void setUpProducerEndpointWithSuccessfulResponse(String body) {
+    private void setUpProducerEndpointWithSuccessfulResponse(RESPONSE_BODIES body) {
         server.stubFor(post(urlEqualTo(ENDPOINT_PATH))
-                .willReturn(okJson(body)));
+                .willReturn(okJson(body.value)));
     }
 
     private PriceServiceGateway createGateway(String baseUrl, long connectTimeout, long readTimeout) {
