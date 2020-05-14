@@ -21,10 +21,10 @@ public interface DefaultApi extends ApiClient.Api {
    * @param requestBody  (required)
    * @return Price
    */
-  @RequestLine("POST /priceFor")
+  @RequestLine("POST /price")
   @Headers({
     "Content-Type: application/json",
     "Accept: application/json",
   })
-  Price priceForPost(List<String> requestBody);
+  Price pricePost(List<String> requestBody);
 }

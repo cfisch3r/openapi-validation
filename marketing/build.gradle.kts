@@ -2,7 +2,7 @@ plugins {
     id("org.openapi.generator") version "4.2.3"
 }
 
-val contractPackage by extra("de.agiledojo.cdd:price-api-marketing:1.3")
+val contractPackage by extra("de.agiledojo.cdd:price-api-marketing:1.4")
 val contractPath by extra("de/agiledojo/cdd/price-api/marketing.yml")
 
 repositories {

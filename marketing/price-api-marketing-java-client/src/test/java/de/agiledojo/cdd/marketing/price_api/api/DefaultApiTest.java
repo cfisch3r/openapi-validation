@@ -29,9 +29,9 @@ public class DefaultApiTest {
      * 
      */
     @Test
-    public void priceForPostTest() {
+    public void pricePostTest() {
         List<String> requestBody = null;
-        // Price response = api.priceForPost(requestBody);
+        // Price response = api.pricePost(requestBody);
 
         // TODO: test validations
     }

@@ -3,7 +3,7 @@ info:
   title: "Potter Price Service for Marketing"
   version: "1.0.0"
 paths:
-  /priceFor:
+  /price:
     post:
       requestBody:
         content:

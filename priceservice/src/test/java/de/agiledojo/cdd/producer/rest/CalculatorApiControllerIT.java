@@ -97,6 +97,6 @@ public class CalculatorApiControllerIT {
     }
 
     private ResultActions performApiCallWithRequestBody(String body) throws Exception {
-        return mvc.perform(post("/priceFor").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(body));
+        return mvc.perform(post("/price").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(body));
     }
 }

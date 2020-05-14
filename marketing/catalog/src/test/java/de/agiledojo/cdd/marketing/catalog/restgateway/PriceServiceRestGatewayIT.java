@@ -25,6 +25,7 @@ public class PriceServiceRestGatewayIT {
     private static final String CALCULATOR_CONTRACT = "de/agiledojo/cdd/price-api/marketing.yml";
     private static final long CONNECT_TIMEOUT = 50L;
     private static final long READ_TIMEOUT = 50L;
+    public static final String ENDPOINT_PATH = "/price";
     private PriceServiceRestGateway gateway;
     private WireMockServer server;
     private OpenApiValidationListener apiValidationListener;
@@ -94,7 +95,7 @@ public class PriceServiceRestGatewayIT {
 
     @Test
     void should_throw_an_exception_when_endpoint_does_not_respond_within_timeout() {
-        server.stubFor(post(urlEqualTo("/priceFor")).willReturn(
+        server.stubFor(post(urlEqualTo(ENDPOINT_PATH)).willReturn(
                 aResponse()
                         .withStatus(200)
                         .withBody(VALID_RESPONSE_BDY)
@@ -104,12 +105,12 @@ public class PriceServiceRestGatewayIT {
     }
 
     private void setupProducerWithResponseStatusCode(int statusCode) {
-        server.stubFor(post(urlEqualTo("/priceFor"))
+        server.stubFor(post(urlEqualTo(ENDPOINT_PATH))
                 .willReturn(status(statusCode)));
     }
 
     private void setUpProducerEndpointWithSuccessfulResponse(String body) {
-        server.stubFor(post(urlEqualTo("/priceFor"))
+        server.stubFor(post(urlEqualTo(ENDPOINT_PATH))
                 .willReturn(okJson(body)));
     }
 

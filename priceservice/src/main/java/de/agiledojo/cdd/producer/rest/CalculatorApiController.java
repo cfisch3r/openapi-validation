@@ -25,7 +25,7 @@ public class CalculatorApiController {
     }
 
 
-    @PostMapping("/priceFor")
+    @PostMapping("/price")
     public Price priceFor(@RequestBody  List<String> bookIds) {
         ArrayList<BOOKS> books = new ArrayList<>();
         for (String bookId : bookIds)

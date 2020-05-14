@@ -23,7 +23,7 @@ class AppTest {
                 .body("[\"I\"]")
                 .contentType("application/json")
         .when()
-                .post("/priceFor")
+                .post("/price")
         .then().assertThat()
                 .statusCode(OK.value());
     }

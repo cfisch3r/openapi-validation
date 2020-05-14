@@ -35,7 +35,7 @@ public class PriceServiceRestGateway implements PriceServiceGateway {
 
     private de.agiledojo.cdd.marketing.price_api.model.Price performRequest(List<POTTER_BOOKS> books) {
         try {
-            return api.priceForPost(books.stream()
+            return api.pricePost(books.stream()
                         .map(POTTER_BOOKS::toString)
                         .collect(Collectors.toList()));
         } catch (FeignException e) {
