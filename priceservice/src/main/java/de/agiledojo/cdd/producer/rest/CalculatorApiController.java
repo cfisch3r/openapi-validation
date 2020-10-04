@@ -16,12 +16,9 @@ public class CalculatorApiController {
 
     private PriceCalculator calculator;
 
-    private TaxCalculator taxCalculator;
-
     @Autowired
     public CalculatorApiController(PriceCalculator calculator, TaxCalculator taxCalculator) {
         this.calculator = calculator;
-        this.taxCalculator = taxCalculator;
     }
 
 
@@ -32,6 +29,6 @@ public class CalculatorApiController {
             books.add(BOOKS.valueOf(bookId));
 
         long priceInCent = calculator.priceFor(books);
-        return new Price(priceInCent,taxCalculator.taxFor(priceInCent));
+        return new Price(priceInCent,calculator.taxFor(priceInCent));
     }
 }

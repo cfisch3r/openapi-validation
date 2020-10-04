@@ -27,6 +27,10 @@ public class PriceServiceGatewayAdapter implements PriceServiceGateway {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
+    public PriceServiceGatewayAdapter(String endpointUrl) {
+        this(endpointUrl,500,500);
+    }
+
     @Override
     public Price priceFor(List<POTTER_BOOKS> books) {
         Price price = getPriceFromEndpoint(books);

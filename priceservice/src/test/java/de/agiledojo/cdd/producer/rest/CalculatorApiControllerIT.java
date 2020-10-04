@@ -38,13 +38,22 @@ public class CalculatorApiControllerIT {
     @MockBean
     private PriceCalculator calculator;
 
-    @MockBean
-    private TaxCalculator taxCalculator;
-
     @BeforeEach
     void setUp() {
         Mockito.when(calculator.priceFor(Mockito.anyList())).thenReturn(500L);
-        Mockito.when(taxCalculator.taxFor(anyLong())).thenReturn(20L);
+        Mockito.when(calculator.taxFor(anyLong())).thenReturn(20L);
+    }
+
+    @Test
+    void shouldReturnCalculatedPrice() throws Exception {
+        performApiCallWithRequestBody(SINGLE_BOOK_ID)
+                .andExpect(jsonPath("inCent", is(500)));
+    }
+
+    @Test
+    void shouldReturnTax() throws Exception {
+        performApiCallWithRequestBody(SINGLE_BOOK_ID)
+                .andExpect(jsonPath("tax", is(20)));
     }
 
     @Test
@@ -61,30 +70,6 @@ public class CalculatorApiControllerIT {
         performApiCallWithRequestBody(SINGLE_BOOK_ID)
                 .andExpect(status().isOk())
                 .andExpect(openApi().isValid(validator));
-    }
-
-    @Test
-    void shouldReturnCalculatedPrice() throws Exception {
-        performApiCallWithRequestBody(SINGLE_BOOK_ID)
-                .andExpect(jsonPath("inCent", is(500)));
-    }
-
-    @Test
-    void shouldReturnTax() throws Exception {
-        performApiCallWithRequestBody(SINGLE_BOOK_ID)
-                .andExpect(jsonPath("tax", is(20)));
-    }
-
-    @Test
-    void shouldPerformCalculationForRequestedBooks() throws Exception {
-        performApiCallWithRequestBody(SINGLE_BOOK_ID);
-        verify(calculator).priceFor(singletonList(I));
-    }
-
-    @Test
-    void shouldGetTaxForCalculatedPrice() throws Exception {
-        performApiCallWithRequestBody(SINGLE_BOOK_ID);
-        verify(taxCalculator).taxFor(500L);
     }
 
     private OpenApiInteractionValidator createValidatorForContract(String contractPath) {

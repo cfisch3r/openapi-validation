@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class DefaultPriceCalculator implements PriceCalculator {
 
+    private static double RATE = 0.19;
+
     private int singleBookPrice;
 
     private Map<Long,Double> discountsForSeries = new HashMap<>();
@@ -24,6 +26,12 @@ public class DefaultPriceCalculator implements PriceCalculator {
         else
             return basePrice(purchasedBooks);
     }
+
+    @Override
+    public long taxFor(long priceInCent) {
+        return Math.round(RATE * priceInCent);
+    }
+
 
     private int basePrice(List<BOOKS> purchasedBooks) {
         return purchasedBooks.size() * singleBookPrice;
