@@ -27,8 +27,11 @@ describe("API Pact test", () => {
                 state: 'price exists',
                 uponReceiving: 'get price',
                 withRequest: {
-                    method: 'GET',
+                    method: 'POST',
                     path: '/price',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
                     body: eachLike("I")
                 },
                 willRespondWith: {
@@ -36,7 +39,7 @@ describe("API Pact test", () => {
                     headers: {
                         'Content-Type': 'application/json; charset=utf-8'
                     },
-                    body: eachLike({
+                    body: like({
                         inCent: 1200,
                         tax: 43
                     }),
@@ -48,9 +51,7 @@ describe("API Pact test", () => {
             // make request to Pact mock server
             const product = await api.getPrice(["I"]);
 
-            expect(product).toStrictEqual([
-                {"inCent": 1200, "tax": 43}
-            ]);
+            expect(product).toStrictEqual({"inCent": 1200, "tax": 43});
         })
     });
 });

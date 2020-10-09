@@ -20,9 +20,15 @@ class API {
     }
 
     async getPrice(bookIds) {
-        return axios.get(this.withPath("/price"), {
-            data: bookIds
-        })
+        return axios(
+            {
+                url: this.withPath("/price"),
+                method: 'post',
+                headers: {
+                  "Content-Type": 'application/json; charset=utf-8'
+                },
+                data: bookIds
+            })
             .then(r => r.data);
     }
 
