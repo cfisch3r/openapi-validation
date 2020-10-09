@@ -4,3 +4,7 @@
 out
 build
 consumer/openapi-java-client
+*.iml
+node_modules
+logs
+pacts
