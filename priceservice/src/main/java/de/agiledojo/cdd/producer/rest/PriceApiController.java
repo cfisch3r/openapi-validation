@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class CalculatorApiController {
+public class PriceApiController {
 
     private PriceCalculator calculator;
 
     @Autowired
-    public CalculatorApiController(PriceCalculator calculator, TaxCalculator taxCalculator) {
+    public PriceApiController(PriceCalculator calculator, TaxCalculator taxCalculator) {
         this.calculator = calculator;
     }
 

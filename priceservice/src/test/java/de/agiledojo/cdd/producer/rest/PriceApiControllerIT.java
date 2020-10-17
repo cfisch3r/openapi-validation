@@ -4,7 +4,6 @@ import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
 import de.agiledojo.cdd.producer.calculator.PriceCalculator;
-import de.agiledojo.cdd.producer.tax.TaxCalculator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,8 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.atlassian.oai.validator.mockmvc.OpenApiValidationMatchers.openApi;
-import static de.agiledojo.cdd.producer.calculator.PriceCalculator.BOOKS.I;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -25,8 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CalculatorApiController.class)
-public class CalculatorApiControllerIT {
+@WebMvcTest(PriceApiController.class)
+public class PriceApiControllerIT {
 
     public static final String SINGLE_BOOK_ID = "[\"I\"]";
     public static final String STORE_CONTRACT = "de/agiledojo/cdd/price-api/store.yml";
@@ -65,7 +62,7 @@ public class CalculatorApiControllerIT {
     }
 
     @Test
-    void shouldFullfillExternContract() throws Exception {
+    void shouldFullfillMarketingContract() throws Exception {
         var validator = createValidatorForContract(MARKETING_CONTRACT);
         performApiCallWithRequestBody(SINGLE_BOOK_ID)
                 .andExpect(status().isOk())
